@@ -25,7 +25,7 @@ export const milestones = [
   ['2004','嘉定校区开始教学','beian-bus']
 ];
 
-export const selections = ['pork-chop-exchange','sixteen-character-telegram','sakura-and-software','sanhaowu-geese','glass-hall-cinema','love-story-track'];
+export const selections = ['student-post-office','t-square-cello','porcelain-concrete-canoe','six-minutes-past-ten','sixteen-character-telegram','sanhaowu-geese'];
 export const publicAssets = ['app.js','site.css','icon.png',...Object.values(photos).map(p => p.file)];
 
 export function checkCatalog() {

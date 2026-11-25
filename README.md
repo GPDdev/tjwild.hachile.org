@@ -2,7 +2,7 @@
 
 <div align="center"><img alt="Pages 构建检查" src="https://github.com/GPDdev/tjwild.hachile.org/actions/workflows/pages.yml/badge.svg"> <img alt="Code MIT" src="https://img.shields.io/badge/code-MIT-green"> <img alt="Version 1.0.0" src="https://img.shields.io/badge/version-1.0.0-blue"> <img alt="简体中文" src="https://img.shields.io/badge/language-简体中文-b4533e"></div>
 
-同济大学民间资料站。首辑收录 19 篇文章，其中 13 篇校园野史。读者可按年代和置信度查找条目，顺着段末编号核对中、英、德文来源。[访问同济野史](https://tjwild.hachile.org/)
+同济大学民间资料站。目前收录 119 篇文章，其中 113 篇校园野史，共引用 128 份公开资料。读者可按年代和置信度查找条目，顺着段末编号核对中、英、德文来源。[访问同济野史](https://tjwild.hachile.org/)
 
 [本地运行](#本地运行) / [公开资料](#公开资料) / [补充与勘误](#补充与勘误) / [发布](#发布) / [授权](#授权)
 
@@ -29,6 +29,8 @@ python -m http.server 8000 --bind 127.0.0.1 --directory _site
 | `assets/` | 本地样式、交互、图标和已授权的三张照片 |
 
 正文有两套独立标注。校史、野史描述内容类型；正史、较可信、当事人回忆、有争议说明材料能支持到哪一步。条目使用稳定地址，例如 [李庄电报考证](https://tjwild.hachile.org/stories/sixteen-character-telegram/)。
+
+本次增补 100 篇，既有老校友讲述的[学生邮局](https://tjwild.hachile.org/stories/student-post-office/)，也有开发者自己留下创作手记的[限时小程序](https://tjwild.hachile.org/stories/six-minutes-past-ten/)。网页保留材料能支持的时间范围，读者可在每篇正文末尾查阅证据说明。
 
 ## 补充与勘误
 
