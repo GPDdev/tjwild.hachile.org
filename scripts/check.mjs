@@ -21,6 +21,9 @@ const files=new Set(expected);
 const html=new Map();
 for(const name of expected.filter(n=>n.endsWith('.html'))) html.set(name,await readFile(join(output,name),'utf8'));
 for (const [name,page] of html) {
+  const footer = page.match(/<footer\b[^>]*>([\s\S]*?)<\/footer>/)?.[1] ?? '';
+  const footerText = footer.replace(/<[^>]*>/g,'').replace(/\s+/g,' ');
+  assert.ok(footerText.includes('同济大学校史、精神与文化交流群 同舟共济会QQ群1101135584'), name+' is missing the QQ group in its footer');
   assert.equal((page.match(/<h1[ >]/g)||[]).length,1,name);
   for (const link of page.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
     const target=link[1].replaceAll('&amp;','&');
