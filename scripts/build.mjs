@@ -37,7 +37,9 @@ function shell({base,route,title,description,main,active=''}) {
 <header class="mast"><div class="wrap top"><a class="brand" href="${base}"><span class="seal" aria-hidden="true">野</span><span>同济野史<small>TONGJI WILD</small></span></a>
 <nav aria-label="主导航">${nav}</nav><div class="actions"><a class="search-link" data-search-link href="${base}archive/#query" aria-label="搜索条目" title="搜索条目 (Ctrl / ⌘ K)"><i class="glass" aria-hidden="true"></i><span>搜索</span></a><button data-theme-toggle class="theme" type="button" aria-label="暗色模式" aria-pressed="false" title="切换亮暗模式"><span aria-hidden="true">◐</span></button></div></div></header>
 <main id="main" class="wrap" tabindex="-1">${main}</main>
-<footer class="wrap foot"><div><strong>同济野史</strong><span class="foot-tag">同济大学民间资料站</span></div><div><a href="${base}sources/">资料与勘误</a><a href="https://ghc.hachile.org/">国豪野史 ↗</a><a href="https://github.com/GPDdev/tjwild.hachile.org">GitHub ↗</a></div></footer></body></html>`;
+<footer class="wrap foot"><div><strong>同济野史</strong><span class="foot-tag">同济大学民间资料站</span></div>
+<div class="foot-links"><a href="${base}sources/">资料与勘误</a><a href="https://ghc.hachile.org/">国豪野史 ↗</a><a href="https://github.com/GPDdev/tjwild.hachile.org">GitHub ↗</a></div>
+<p class="foot-community">同济大学校史、精神与文化交流群 <span>同舟共济会QQ群1101135584</span></p></footer></body></html>`;
 }
 
 function home() {
@@ -111,7 +113,10 @@ export async function build() {
   await writeFile(path.join(out,'robots.txt'),'User-agent: *\nAllow: /\nSitemap: '+origin+'sitemap.xml\n');
   await writeFile(path.join(out,'CNAME'),'tjwild.hachile.org\n');
   await writeFile(path.join(out,'.nojekyll'),'');
-  await writeFile(path.join(out,'404.html'),'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>没有找到这篇条目 | 同济野史</title><main><h1>没有找到这篇条目</h1><p><a href="'+origin+'archive/">回同济野史条目库</a></p></main></html>\n');
+  await writeFile(path.join(out,'404.html'),shell({
+    base:'/',route:'404.html',title:'没有找到这篇条目',description:'查找同济野史的其他条目。',
+    main:'<section class="index-head"><h1>没有找到这篇条目</h1><p><a class="text-link" href="/archive/">回同济野史条目库</a></p></section>'
+  }));
   console.log('Built '+articles.length+' articles and '+Object.keys(sources).length+' cited sources.');
 }
 await build();

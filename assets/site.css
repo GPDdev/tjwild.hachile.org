@@ -103,12 +103,14 @@ figcaption { display: flex; justify-content: space-between; gap: 5px 14px; flex-
 .years li { padding: 16px 12px 8px 0; }
 .years time { color: var(--red); font: 600 24px/1.5 var(--serif); }
 .years a { display: block; font-size: 15px; text-decoration-color: var(--line); }
-.foot { border-top: 1px solid var(--line); margin-top: 64px; padding: 22px 0 30px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.foot { border-top: 1px solid var(--line); margin-top: 64px; padding: 22px 0 30px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
 .foot strong { font: 700 22px/1.5 var(--serif); }
-.foot-tag,.foot a { color: var(--muted); font-size: 13px; }
+.foot-tag,.foot a,.foot-community { color: var(--muted); font-size: 13px; }
 .foot-tag { margin-left: 12px; }
 .foot a { text-decoration: none; }
-.foot > div:last-child { display: flex; flex-wrap: wrap; gap: 18px; }
+.foot-community { margin: 0; width: 100%; }
+.foot-community span { white-space: nowrap; }
+.foot-links { display: flex; flex-wrap: wrap; gap: 18px; }
 .index-head { padding: 45px 0 24px; }
 .index-head h1 { margin: 7px 0 8px; font-size: clamp(38px,5.8vw,64px); line-height: 1.3; }
 .index-head > p:last-child { color: var(--muted); }
