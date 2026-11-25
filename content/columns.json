@@ -2,7 +2,7 @@
   {
     "id": "journeys",
     "title": "迁校与旧址",
-    "description": "沿旧校址、车站和暂借的庙宇，寻找学校搬迁途中留下的痕迹。",
+    "description": "从吴淞、李庄到武汉，沿学生报到、上课和搬迁的足迹寻找旧校址。",
     "events": [
       "before-the-lecture",
       "sixteen-character-telegram",
@@ -36,7 +36,7 @@
   {
     "id": "everyday",
     "title": "食住与通信",
-    "description": "吃饭、排队、拨长途和收消息，同济人的一天怎样随校园一起改变。",
+    "description": "宿舍、食堂、公交和通信，学生怎样安排日常生活，又为哪些事情与学校交涉。",
     "events": [
       "sanhaowu-geese",
       "pork-chop-exchange",
@@ -82,7 +82,7 @@
   {
     "id": "societies",
     "title": "社团与舞台",
-    "description": "循着节目单、歌本和赛报，看一群学生怎样合成一支队伍、撑起一场演出。",
+    "description": "从自治会、学生运动到社团演出，读同济学生如何为共同关心的事走到一起。",
     "events": [
       "glass-hall-cinema",
       "love-story-track",
@@ -118,7 +118,7 @@
   {
     "id": "workshop",
     "title": "课堂与街坊",
-    "description": "工场、赛场和社区都有人验收作业。一条船怎样下水，一道墙怎样向街坊打开。",
+    "description": "循着工场、校园园林和街坊，读师生把图纸和课堂作业做成实物的故事。",
     "events": [
       "workshop-six",
       "dresden-test-benches",

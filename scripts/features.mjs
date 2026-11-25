@@ -9,6 +9,9 @@ export const columnOf = new Map(columns.flatMap(c => c.events.map(id => [id,c]))
 const notes = new Map(articles.map(a => [a.slug,a]));
 const columnIds = new Map(columns.map(c => [c.id,c]));
 const idPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const topics = new Map([['校园传闻','campus-lore'],['校政争议','campus-governance'],['学生运动','student-movements']]);
+const gradeClass = {'正史':'record','较可信':'supported','当事人回忆':'memory','有争议':'disputed'};
+export const badge = value => '<span class="grade '+gradeClass[value]+'">'+esc(value)+'</span>';
 
 export const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 export const story = (base, id) => base+'stories/'+id+'/';
@@ -35,15 +38,22 @@ export function validateFeatures(){
     assert.equal(f.publication,'public');
     assert.ok(Object.hasOwn(grades,f.confidence),f.slug+' is missing an evidence grade');
     assert.ok(columnIds.has(f.category)); assert.match(f.slug,idPattern);
+    if (f.topics) {
+      assert.ok(Array.isArray(f.topics) && f.topics.length && new Set(f.topics).size === f.topics.length);
+      for (const topic of f.topics) assert.ok(topics.has(topic), 'Unknown reading topic '+topic);
+    }
     for (const k of ['title','period','deck','evidence']) assert.ok(typeof f[k]==='string' && f[k].trim(),f.slug+' '+k);
     assert.ok(f.sections.length>1 && featureSources(f).length>1);
     assert.equal(new Set(f.sections.map(s=>s.id)).size,f.sections.length);
     for(const s of f.sections){
       assert.match(s.id,idPattern);
-      assert.ok(s.heading && s.paragraphs.length && Array.isArray(s.events) && s.events.length);
+      assert.ok(s.heading && s.paragraphs.length && Array.isArray(s.events));
       for(const id of s.events) assert.ok(notes.has(id),'Unknown article '+id);
       for(const p of s.paragraphs){
         assert.ok(p.text.trim() && p.sources.length);
+        if (f.topics || p.confidence || p.attribution) {
+          assert.ok(Object.hasOwn(grades,p.confidence) && p.attribution?.trim(), 'Missing attribution or claim grade in '+f.slug);
+        }
         for(const id of p.sources) assert.ok(Object.hasOwn(sources,id),'Unknown source '+id);
       }
     }
@@ -51,8 +61,8 @@ export function validateFeatures(){
 }
 
 export function leadCard(base,f, searchable=false) {
-  const searchWords = [f.title,f.deck,f.period,columnIds.get(f.category).title,f.confidence,f.evidence,
-    ...f.sections.flatMap(s=>[s.heading,...s.paragraphs.map(p=>p.text)])];
+  const searchWords = [f.title,f.deck,f.period,columnIds.get(f.category).title,f.confidence,f.evidence,...(f.topics ?? []),
+    ...f.sections.flatMap(s=>[s.heading,...s.paragraphs.flatMap(p=>[p.text,p.attribution ?? ''])])];
   const idx=searchable?' class="essay-card listing-feature" data-grade="'+esc(f.confidence)+'" data-index="'+esc(searchWords.join(' '))+'"':' class="essay-card"';
   return '<article'+idx+'><p class="essay-stats">'+esc(f.period)+' <span>/</span> '+metric(f)+' / '+esc(f.confidence)+'</p><h3>'+link(featureLink(base,f),f.title)+'</h3><p>'+esc(f.deck)+'</p></article>';
 }
@@ -61,12 +71,24 @@ export function columnStrip(base){
   return '<div class="column-strip" aria-label="专题栏目">'+columns.map(c=>'<a href="'+base+columnRoute(c)+'">'+esc(c.title)+' <span aria-hidden="true">↗</span></a>').join('')+'</div>';
 }
 
+export function topicLinks(base, names = [...topics.keys()]) {
+  return '<nav class="topic-links" aria-label="按题材阅读">'+names.map(name=>link(base+'lore/#'+topics.get(name),name)).join('')+'</nav>';
+}
+
+function topicDirectory(base) {
+  const groups = [...topics].map(([name,id]) => {
+    const essays = features.filter(f=>f.topics?.includes(name));
+    return '<section id="'+id+'"><h3>'+esc(name)+'</h3><ul>'+essays.map(f=>'<li>'+link(featureLink(base,f),f.title)+'</li>').join('')+'</ul></section>';
+  });
+  return '<section class="topic-directory"><h2>按题材选读</h2><div>'+groups.join('')+'</div></section>';
+}
+
 export function columnContents(base,c){
   const list=features.filter(f=>f.category===c.id);
   return '<section class="journal-section" id="'+c.id+'"><header><h2>'+link(base+columnRoute(c),c.title)+'</h2><p>'+esc(c.description)+'</p><a class="text-link" href="'+base+columnRoute(c)+'">'+list.length+' 篇长文 / '+c.events.length+' 则条目 →</a></header><div class="essay-list">'+list.map(f=>leadCard(base,f)).join('')+'</div></section>';
 }
 export function directory(base){
-  return '<header class="journal-heading"><h1>专题野史</h1><p>按栏目读长文。文中的注号通往原始资料，各节末尾可以回查相关事件。</p></header>'+columnStrip(base)+columns.map(c=>columnContents(base,c)).join('');
+  return '<header class="journal-heading"><h1>专题野史</h1><p>从一则校园传闻、一场争论或一次学生运动读起。点开段末注号，可以对照讲述者的原话和当年的记录。</p></header>'+columnStrip(base)+topicDirectory(base)+columns.map(c=>columnContents(base,c)).join('');
 }
 export function columnPage(base,c){
   const list=features.filter(f=>f.category===c.id);
@@ -82,7 +104,9 @@ export function backlinks(base,id){
 }
 const pairings={
   'westward-classroom':'playing-for-tongji','wusong-in-photographs':'engineering-homework','canteen-table':'campus-and-neighbours','campus-message':'stage-belongs-to-students',
-  'stage-belongs-to-students':'campus-message','playing-for-tongji':'westward-classroom','engineering-homework':'wusong-in-photographs','campus-and-neighbours':'canteen-table'
+  'stage-belongs-to-students':'campus-message','playing-for-tongji':'westward-classroom','engineering-homework':'wusong-in-photographs','campus-and-neighbours':'canteen-table',
+  'december-student-voices':'red-blue-lunchbox','red-blue-lunchbox':'december-student-voices','january-assembly':'two-cities-one-medical-class',
+  'two-cities-one-medical-class':'january-assembly','digging-sanhaowu':'last-bus-to-jiading','last-bus-to-jiading':'digging-sanhaowu'
 };
 export function featurePage(base,f){
   const c=columnIds.get(f.category);
@@ -97,16 +121,20 @@ export function featurePage(base,f){
         citedAt.get(id).push(link('#'+anchor,'第'+(si+1)+'节第'+(pi+1)+'段'));
         return '<a href="#ref-'+n+'" aria-label="来源 '+n+'">['+n+']</a>';
       }).join(' ');
-      return '<p id="'+anchor+'">'+esc(p.text)+' <sup>'+signs+'</sup></p>';
+      const note = p.confidence
+        ? '<span class="claim-note" data-confidence="'+esc(p.confidence)+'">'+badge(p.confidence)+' <span>'+esc(p.attribution)+'</span> <sup>'+signs+'</sup></span>'
+        : ' <sup>'+signs+'</sup>';
+      return '<p id="'+anchor+'">'+esc(p.text)+note+'</p>';
     }).join('');
     const events=s.events.map(id=>{const a=notes.get(id);return '<li>'+link(story(base,id),a.title)+' <small>'+esc(a.confidence)+'</small></li>';}).join('');
-    return '<section class="prose-section deep-section" id="'+s.id+'"><h2>'+esc(s.heading)+'</h2>'+paras+'<details class="event-links"><summary>查阅本节事件（'+s.events.length+'）</summary><ul>'+events+'</ul></details></section>';
+    const relatedEvents = events ? '<details class="event-links"><summary>查阅本节事件（'+s.events.length+'）</summary><ul>'+events+'</ul></details>' : '';
+    return '<section class="prose-section deep-section" id="'+s.id+'"><h2>'+esc(s.heading)+'</h2>'+paras+relatedEvents+'</section>';
   }).join('');
   const refs=ids.map((id,i)=>{const s=sources[id];return '<li id="ref-'+(i+1)+'">'+link(s.url,s.title)+'<small>'+esc(s.publisher)+' / '+({zh:'中文',de:'德文',en:'英文'})[s.language]+'　'+'返回引文 '+citedAt.get(id).join('、')+'</small></li>';}).join('');
   const related=features.filter(x=>x!==f && (x.category===c.id || x.slug===pairings[f.slug]));
   return '<p class="journal-crumb">'+link(base+'lore/','专题野史')+' / '+link(base+columnRoute(c),c.title)+'</p>'
     +'<header class="reading-head"><p class="essay-stats">'+esc(f.period)+' / '+metric(f)+' / '+ids.length+' 份出处 / '+esc(f.confidence)+'</p><h1>'+esc(f.title)+'</h1><p class="standfirst">'+esc(f.deck)+'</p></header>'
-    +'<details class="compact-toc"><summary>本文目录</summary><div>'+toc+'</div></details>'
+    +(f.topics ? topicLinks(base,f.topics) : '')+'<details class="compact-toc"><summary>本文目录</summary><div>'+toc+'</div></details>'
     +'<div class="reading-grid"><article>'+sections
     +'<section class="evidence" id="evidence"><h2>材料怎样互证</h2><p>'+esc(f.evidence)+'</p></section>'
     +'<section class="refs" id="sources"><h2>原始出处</h2><ol>'+refs+'</ol></section></article><aside><div class="toc"><strong>本文目录</strong>'+toc+'</div></aside></div>'

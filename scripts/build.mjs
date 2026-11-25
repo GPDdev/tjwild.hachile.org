@@ -2,7 +2,7 @@ import { cp, lstat, mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { articles, sources, grades, photos, milestones, publicAssets, checkCatalog } from './catalog.mjs';
-import { columns, features, columnRoute, featureRoute, featureSources, validateFeatures, esc, story, leadCard, columnStrip, columnPage, directory, featurePage, backlinks } from './features.mjs';
+import { columns, features, columnRoute, featureRoute, featureSources, validateFeatures, esc, badge, story, leadCard, columnStrip, topicLinks, columnPage, directory, featurePage, backlinks } from './features.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const out = path.resolve(root, '_site');
@@ -10,8 +10,6 @@ const origin = 'https://tjwild.hachile.org/';
 const lookup = new Map(articles.map(entry => [entry.slug, entry]));
 const wild = articles.filter(entry => entry.kind === '野史');
 const byDate = (a,b) => b.year - a.year || a.title.localeCompare(b.title, 'zh-CN');
-const gradeClass = {'正史':'record','较可信':'supported','当事人回忆':'memory','有争议':'disputed'};
-const badge = value => '<span class="grade '+gradeClass[value]+'">'+esc(value)+'</span>';
 const marked = active => active ? ' aria-current="page"' : '';
 const photoUrl = image => 'https://commons.wikimedia.org/wiki/'+encodeURI(image.page);
 
@@ -42,13 +40,14 @@ function shell({base,route,title,description,main,active=''}) {
 }
 
 function home() {
-  const image = photos['lizhuang-student-radio'];
+  const image = photos['sanhaowu-geese'];
   const timeline = milestones.map(([year,label,id])=>`<li><time>${year}</time><a href="${story('./',id)}">${label}</a></li>`).join('');
-  const lead = features.find(f=>f.slug==='westward-classroom');
+  const lead = features.find(f=>f.slug==='digging-sanhaowu');
   return shell({base:'./',route:'',title:'同济野史',description:'同济大学民间资料站。按主题阅读校园历史长文，查阅事件和可核对的史料。',active:'home',
     main:`<div class="journal-mast"><div><p class="overline">TONGJI CAMPUS HISTORIES</p><h1>同济野史</h1></div><div class="journal-imprint">同济大学民间资料站<small>${columns.length} 个栏目 / ${features.length} 篇专题 / ${articles.length} 则条目</small></div></div>
 ${columnStrip('./')}
-<section class="journal-lead"><div><p class="essay-label">本期选读 / ${esc(columns.find(c=>c.id===lead.category).title)}</p><h2><a href="${featureRoute(lead)}">${esc(lead.title)}</a></h2><p class="lead-deck">${esc(lead.deck)}</p><a class="button" href="${featureRoute(lead)}">阅读长文 <b aria-hidden="true">↗</b></a></div><figure><a href="${featureRoute(lead)}">${img('./',image,true)}</a><figcaption><span>四川李庄禹王宫，同济校本部旧址，${image.year} 年摄</span>${credit(image)}</figcaption></figure></section>
+<section class="journal-lead"><div><p class="essay-label">本期选读 / ${esc(columns.find(c=>c.id===lead.category).title)}</p><h2><a href="${featureRoute(lead)}">${esc(lead.title)}</a></h2><p class="lead-deck">${esc(lead.deck)}</p><a class="button" href="${featureRoute(lead)}">阅读长文 <b aria-hidden="true">↗</b></a></div><figure><a href="${featureRoute(lead)}">${img('./',image,true)}</a><figcaption><span>${esc(image.caption)}，${image.year} 年摄</span>${credit(image)}</figcaption></figure></section>
+${topicLinks('./')}
 <section class="home-features"><div class="section-head"><h2>各栏选读</h2><a class="text-link" href="lore/">全部专题 →</a></div><div class="home-editions">${columns.map(c=>{const f=features.find(item=>item.category===c.id && item!==lead);return '<div><a class="essay-label" href="'+columnRoute(c)+'">'+esc(c.title)+'</a>'+leadCard('./',f)+'</div>';}).join('')}</div></section>
 <section class="years" id="timeline"><div class="section-head"><div><p class="overline">CHRONOLOGY</p><h2>校史大事记</h2></div></div><ol>${timeline}</ol></section>`});
 }

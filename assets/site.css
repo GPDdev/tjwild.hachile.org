@@ -244,6 +244,18 @@ figcaption { display: flex; justify-content: space-between; gap: 5px 14px; flex-
 .deep-section p+p { margin-top:1em; }
 .deep-section p { line-height:1.95; }
 .deep-section sup a { text-decoration:none; }
+.claim-note { display:flex; flex-wrap:wrap; align-items:baseline; gap:.25rem .55rem; margin-top:.35rem; color:var(--muted); font:13px/1.6 var(--sans); }
+.claim-note sup { vertical-align:baseline; font-size:inherit; }
+.claim-note sup a { display:inline-block; padding:2px 3px; text-decoration:underline; text-underline-offset:2px; }
+.topic-links { display:flex; flex-wrap:wrap; gap:6px 20px; margin:12px 0 22px; font:600 14px/1.8 var(--sans); }
+.topic-links a { color:var(--green); text-underline-offset:4px; }
+.topic-directory { padding:26px 0; border-bottom:1px solid var(--line); }
+.topic-directory>div { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:16px 30px; }
+.topic-directory h3 { color:var(--green); font:600 16px/1.5 var(--sans); margin:12px 0 8px; }
+.topic-directory ul { list-style:none; margin:0; padding:0; }
+.topic-directory li+li { margin-top:7px; }
+.topic-directory a { text-decoration-color:var(--line); text-underline-offset:3px; }
+.topic-directory section { scroll-margin-top:16px; }
 .event-links { padding:8px 12px; margin-top:15px; border-left:2px solid var(--line); color:var(--muted); font-size:14px; }
 .event-links summary,.compact-toc summary { cursor:pointer; font-weight:600; color:var(--green); }
 .event-links ul { margin:8px 0 0; }

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { features, columns, featureRoute, columnRoute, featureSources, validateFeatures, esc } from './features.mjs';
+import { features, columns, topics, featureRoute, columnRoute, featureSources, validateFeatures, esc } from './features.mjs';
 import { articles, sources, grades, publicAssets, checkCatalog } from './catalog.mjs';
 
 validateFeatures();
@@ -50,12 +50,22 @@ for(const feature of features) {
   const route = featureRoute(feature);
   const page = html.get(route+'index.html');
   const ids = featureSources(feature);
+  for (const topic of feature.topics ?? []) {
+    const topicId = topics.get(topic);
+    const group = html.get('lore/index.html').match(new RegExp('<section id="'+topicId+'">([\\s\\S]*?)</section>'))?.[1];
+    assert.ok(group?.includes('href="../'+route+'"'),feature.slug+' missing from '+topic);
+    assert.ok(html.get('index.html').includes('href="./lore/#'+topicId+'"'));
+  }
   assert.ok(html.get(columnRoute(columns.find(c=>c.id===feature.category))+'index.html').includes(route));
   assert.ok(html.get('archive/index.html').includes(route));
   for(const id of ids) assert.ok(page.includes(esc(sources[id].url)), feature.slug+' '+id);
   for(const [si,section] of feature.sections.entries()) {
     for(const [pi,paragraph] of section.paragraphs.entries()) {
       assert.ok(page.includes(esc(paragraph.text)),feature.slug+' '+section.id);
+      if (paragraph.confidence) {
+        const para = page.match(new RegExp('<p id="p-'+(si+1)+'-'+(pi+1)+'">([\\s\\S]*?)</p>'))?.[1];
+        assert.ok(para?.includes('data-confidence="'+esc(paragraph.confidence)+'"') && para.includes(esc(paragraph.attribution)),feature.slug+' missing claim attribution');
+      }
       for(const id of paragraph.sources) {
         const n = ids.indexOf(id)+1;
         const reference = page.match(new RegExp('<li id="ref-'+n+'">([\\s\\S]*?)</li>'))?.[1];
