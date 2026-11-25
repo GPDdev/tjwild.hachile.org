@@ -1,0 +1,14 @@
+{
+  "name": "tjwild-hachile-org",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "同济野史，标注置信度和史料出处的同济大学民间历史资料站。",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs && node scripts/check.mjs"
+  }
+}
