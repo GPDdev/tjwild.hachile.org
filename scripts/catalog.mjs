@@ -12,6 +12,7 @@ export const grades = {
 };
 
 export const photos = {
+  'lizhuang-student-radio': { file: 'lizhuang-yuwang.jpg', caption: '四川李庄禹王宫，同济大学西迁时期校本部旧址', year: '2025', author: 'N509FZ', size: [1280,853], page: 'File:Lizhuang_Yuwang_Temple_(20250118093723).jpg', license: '4.0' },
   'wenyuan-entrance': { file: 'wenyuan.webp', caption: '四平路校区，文远楼', year: '2018', author: 'Qiu Chaofan', size: [1360,1120], page: 'File:Wenyuan_Building_Front.jpg', license: '4.0' },
   'sanhaowu-geese': { file: 'geese.webp', caption: '三好坞的鹅', year: '2002', author: 'LGN', size: [800,592], page: 'File:三好坞的鹅_-_panoramio.jpg', license: '3.0' },
   'glass-hall-cinema': { file: 'auditorium.webp', caption: '冬天的四平路校区大礼堂', year: '2008', author: 'LGN', size: [1450,1088], page: 'File:冰霜覆盖的大礼堂_-_panoramio.jpg', license: '3.0' }
@@ -25,12 +26,11 @@ export const milestones = [
   ['2004','嘉定校区开始教学','beian-bus']
 ];
 
-export const selections = ['student-post-office','t-square-cello','porcelain-concrete-canoe','six-minutes-past-ten','sixteen-character-telegram','sanhaowu-geese'];
 export const publicAssets = ['app.js','site.css','icon.png',...Object.values(photos).map(p => p.file)];
 
-export function checkCatalog() {
+export function checkCatalog(featureSourceIds = []) {
   const ids = new Set();
-  const cited = new Set();
+  const cited = new Set(featureSourceIds);
   const exact = (value, keys) => assert.deepEqual(Object.keys(value).sort(), keys.split(' ').sort());
   const string = value => assert.ok(typeof value === 'string' && value.trim().length > 0);
   for (const [id, source] of Object.entries(sources)) {
@@ -63,5 +63,5 @@ export function checkCatalog() {
     }
   }
   assert.equal(cited.size, Object.keys(sources).length, 'Source list must contain only cited records');
-  for (const slug of [...selections,...Object.keys(photos),...milestones.map(row=>row[2])]) assert.ok(ids.has(slug), 'Missing article ' + slug);
+  for (const slug of [...Object.keys(photos),...milestones.map(row=>row[2])]) assert.ok(ids.has(slug), 'Missing article ' + slug);
 }

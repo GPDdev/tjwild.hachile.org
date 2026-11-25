@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { features, columns, featureRoute, columnRoute, featureSources, validateFeatures, esc } from './features.mjs';
 import { articles, sources, grades, publicAssets, checkCatalog } from './catalog.mjs';
 
-checkCatalog();
+validateFeatures();
+checkCatalog(features.flatMap(featureSources));
 const output=fileURLToPath(new URL('../_site/',import.meta.url));
 async function inventory(dir) {
   const files=[];
@@ -15,7 +17,8 @@ async function inventory(dir) {
   }
   return files;
 }
-const expected=['index.html','archive/index.html','wild/index.html','sources/index.html','404.html','CNAME','.nojekyll','robots.txt','sitemap.xml',...publicAssets.map(n=>'assets/'+n),...articles.map(a=>'stories/'+a.slug+'/index.html')];
+const longPages=['lore/',...columns.map(columnRoute),...features.map(featureRoute)].map(route=>route+'index.html');
+const expected=[...longPages,'index.html','archive/index.html','wild/index.html','sources/index.html','404.html','CNAME','.nojekyll','robots.txt','sitemap.xml',...publicAssets.map(n=>'assets/'+n),...articles.map(a=>'stories/'+a.slug+'/index.html')];
 assert.deepEqual((await inventory(output)).sort(),expected.sort(),'Unexpected files in the Pages artifact');
 const files=new Set(expected);
 const html=new Map();
@@ -25,6 +28,8 @@ for (const [name,page] of html) {
   const footerText = footer.replace(/<[^>]*>/g,'').replace(/\s+/g,' ');
   assert.ok(footerText.includes('同济大学校史、精神与文化交流群 同舟共济会QQ群1101135584'), name+' is missing the QQ group in its footer');
   assert.equal((page.match(/<h1[ >]/g)||[]).length,1,name);
+  const anchors = [...page.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
+  assert.equal(new Set(anchors).size,anchors.length,'Repeated anchor in '+name);
   for (const link of page.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
     const target=link[1].replaceAll('&amp;','&');
     if (/^(https:|mailto:)/.test(target)) continue;
@@ -40,6 +45,25 @@ for(const a of articles) {
   const refs=new Set(a.sections.flatMap(s=>s.sources));
   for(const id of refs) assert.ok(detail.includes(sources[id].url.replaceAll('&','&amp;')), id);
   assert.equal(html.get('wild/index.html').includes('href="../stories/'+a.slug+'/"'),a.kind==='野史');
+}
+for(const feature of features) {
+  const route = featureRoute(feature);
+  const page = html.get(route+'index.html');
+  const ids = featureSources(feature);
+  assert.ok(html.get(columnRoute(columns.find(c=>c.id===feature.category))+'index.html').includes(route));
+  assert.ok(html.get('archive/index.html').includes(route));
+  for(const id of ids) assert.ok(page.includes(esc(sources[id].url)), feature.slug+' '+id);
+  for(const [si,section] of feature.sections.entries()) {
+    for(const [pi,paragraph] of section.paragraphs.entries()) {
+      assert.ok(page.includes(esc(paragraph.text)),feature.slug+' '+section.id);
+      for(const id of paragraph.sources) {
+        const n = ids.indexOf(id)+1;
+        const reference = page.match(new RegExp('<li id="ref-'+n+'">([\\s\\S]*?)</li>'))?.[1];
+        assert.ok(reference?.includes('href="#p-'+(si+1)+'-'+(pi+1)+'"'),feature.slug+' citation return');
+      }
+    }
+    for(const id of section.events) assert.ok(html.get('stories/'+id+'/index.html').includes(route+'#'+section.id),'Missing event backlink '+id);
+  }
 }
 const saved=articles[0].publication;
 try {
