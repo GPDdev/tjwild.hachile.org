@@ -27,11 +27,11 @@ function shell({base,route,title,description,main,active=''}) {
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(pageTitle)}</title><meta name="description" content="${esc(description)}">
 <meta property="og:title" content="${esc(pageTitle)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${origin}${route}"><meta property="og:type" content="${(route.startsWith('stories/') || route.split('/').filter(Boolean).length===3)?'article':'website'}">
-<link rel="canonical" href="${origin}${route}"><link rel="icon" type="image/png" href="${base}assets/icon.png">
+<link rel="canonical" href="${origin}${route}"><link rel="icon" type="image/png" href="${base}assets/icon.png?v=tongzhou">
 <script>try{const t=localStorage.getItem('tjwild-theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch{}</script>
 <link rel="stylesheet" href="${base}assets/site.css"><script src="${base}assets/app.js" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
-<header class="mast"><div class="wrap top"><a class="brand" href="${base}"><span class="seal" aria-hidden="true">野</span><span>同济野史<small>TONGJI WILD</small></span></a>
+<header class="mast"><div class="wrap top"><a class="brand" href="${base}"><img class="brand-mark" src="${base}assets/tongzhou-gongjihui.jpg" width="288" height="288" alt="同舟共济会"><span>同济野史<small>TONGJI WILD</small></span></a>
 <nav aria-label="主导航">${nav}</nav><div class="actions"><a class="search-link" data-search-link href="${base}archive/#query" aria-label="搜索条目" title="搜索条目 (Ctrl / ⌘ K)"><i class="glass" aria-hidden="true"></i><span>搜索</span></a><button data-theme-toggle class="theme" type="button" aria-label="暗色模式" aria-pressed="false" title="切换亮暗模式"><span aria-hidden="true">◐</span></button></div></div></header>
 <main id="main" class="wrap" tabindex="-1">${main}</main>
 <footer class="wrap foot"><div><strong>同济野史</strong><span class="foot-tag">同济大学民间资料站</span></div>

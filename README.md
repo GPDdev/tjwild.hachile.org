@@ -29,7 +29,7 @@ python -m http.server 8000 --bind 127.0.0.1 --directory _site
 | `scripts/features.mjs` | 栏目和长文的校验、段落注号、引文回跳与关联事件 |
 | `scripts/build.mjs` | 生成首页、全部条目、野史目录、来源页和各文章页 |
 | `scripts/check.mjs` | 检查发布文件清单、链接、锚点、引文和可见范围 |
-| `assets/` | 本地样式、交互、图标和四张已授权照片 |
+| `assets/` | 本地样式、交互、“同舟共济会”手写标识、浏览器图标和四张已授权照片 |
 
 正文有两套独立标注。校史、野史描述内容类型；正史、较可信、当事人回忆、有争议说明材料能支持到哪一步。条目使用稳定地址，例如 [李庄电报考证](https://tjwild.hachile.org/stories/sixteen-character-telegram/)。
 
@@ -48,6 +48,8 @@ python -m http.server 8000 --bind 127.0.0.1 --directory _site
 推送至 `main` 后，GitHub Actions 运行 `npm test`，将新生成的 `_site/` 作为唯一的 Pages 发布目录。PR 运行相同检查。构建只读取指定的公开内容文件并复制明确列出的资源，非公开文章会使构建失败。自定义域名为 `tjwild.hachile.org`。
 
 ## 授权
+
+页首使用站点维护者提供的“同舟共济会”手写标识。浏览器图标保留相同的五字题字和配色。[页首原图](assets/tongzhou-gongjihui.jpg) / [浏览器图标](assets/icon.png)
 
 站点代码采用 [MIT](LICENSE)，原创条目文字采用 [CC BY-NC-SA 4.0](content/LICENSE.md)。报道和馆藏原文保留各自权利。前三张校园照片已缩放并转为 WebP。李庄照片采用共享资源提供的 JPEG 预览图。封面按屏幕宽度裁切，四张照片各自沿用原许可。
 

@@ -26,7 +26,7 @@ export const milestones = [
   ['2004','嘉定校区开始教学','beian-bus']
 ];
 
-export const publicAssets = ['app.js','site.css','icon.png',...Object.values(photos).map(p => p.file)];
+export const publicAssets = ['app.js','site.css','icon.png','tongzhou-gongjihui.jpg',...Object.values(photos).map(p => p.file)];
 
 export function checkCatalog(featureSourceIds = []) {
   const ids = new Set();

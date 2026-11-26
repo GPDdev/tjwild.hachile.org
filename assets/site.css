@@ -47,7 +47,15 @@ img { max-width: 100%; display: block; }
 .top { display: flex; align-items: center; min-height: 78px; gap: 32px; }
 .brand { display: flex; align-items: center; gap: 11px; line-height: 1.1; text-decoration: none; font: 700 19px/1.14 var(--serif); white-space: nowrap; }
 .brand small { display: block; margin-top: 6px; color: var(--muted); font: 10px/1 var(--mono); letter-spacing: .15em; }
-.seal { display: grid; place-items: center; width: 39px; height: 39px; border: 1px solid var(--red); background: var(--red); color: var(--paper); box-shadow: inset 0 0 0 2px var(--paper); font: 700 25px/1 var(--serif); border-radius: 3px; }
+.brand-mark {
+  flex: none;
+  width: clamp(94px, 15vw, 132px);
+  height: clamp(32px, 5vw, 42px);
+  object-fit: cover;
+  object-position: 50% 53%;
+  background: #fff;
+  border-radius: 4px;
+}
 nav { display: flex; align-self: stretch; align-items: stretch; gap: 28px; margin-inline: auto 10px; }
 nav a { display: flex; align-items: center; position: relative; font-size: 14px; text-decoration: none; white-space: nowrap; }
 nav a[aria-current] { color: var(--red); font-weight: 700; }
@@ -170,7 +178,8 @@ figcaption { display: flex; justify-content: space-between; gap: 5px 14px; flex-
 @media (max-width: 640px) {
   .wrap { width: calc(100% - 36px); }
   .top { display:grid; grid-template-columns:1fr auto; gap:0; padding-top:12px; }
-  .actions { justify-self:end; grid-column:2; grid-row:1; }
+  .brand { gap:8px; }
+  .actions { justify-self:end; grid-column:2; grid-row:1; gap:10px; }
   nav { grid-column:1 / -1; grid-row:2; margin:8px 0 0; gap:clamp(14px,5vw,32px); min-height:40px; }
   .hero { grid-template-columns:minmax(0,1fr); gap:22px; padding:30px 0 23px; }
   .hero h1 { font-size:clamp(60px,13vw,82px); margin:9px 0; }
